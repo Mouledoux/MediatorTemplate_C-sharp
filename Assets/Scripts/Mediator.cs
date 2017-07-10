@@ -64,7 +64,7 @@ public class Mediator : UnityEngine.MonoBehaviour
         
     public System.Collections.Generic.Dictionary<string, Callback> subscriptions =
         new System.Collections.Generic.Dictionary<string, Callback>();
-    }
+}
 
 
 
@@ -155,7 +155,7 @@ public class Packet
         private string[] strings;
 
         /// <summary>
-        /// Constructor to insure all arrays are set, even if they are empty 
+        /// Constructor to ensure all arrays are set, even if they are empty
         /// </summary>
         /// <param name="ints">Predefined array of ints</param>
         /// <param name="bools">Predefined array of bools</param>
