@@ -62,34 +62,9 @@ public class Mediator : UnityEngine.MonoBehaviour
         InitializeSingleton();
     }
         
-    private System.Collections.Generic.Dictionary<string, Callback> subscriptions =
+    public System.Collections.Generic.Dictionary<string, Callback> subscriptions =
         new System.Collections.Generic.Dictionary<string, Callback>();
-        
-    public static void Subscribe(string message, Callback callback)
-    {
-        Callback cb;
-
-        if(GetInstance.subscriptions.TryGetValue(message, out cb))
-        {
-            cb += callback;
-        }
-        else
-        {
-
-        }
     }
-
-    public static void Unsubscribe(string message, Callback callback)
-    {
-
-    }
-
-    public static void NotifySubscribers(string message)
-    {
-
-    }
-        
-}
 
 
 
@@ -98,7 +73,15 @@ public class Mediator : UnityEngine.MonoBehaviour
 /// </summary>
 public class Publisher : UnityEngine.MonoBehaviour
 {
+    private static void NotifySubscribers(string message, Packet data)
+    {
+        Mediator.Callback cb;
 
+        if (Mediator.GetInstance.subscriptions.TryGetValue(message, out cb))
+        {
+            cb.Invoke(data);
+        }
+    }
 }
 
 
@@ -107,7 +90,30 @@ public class Publisher : UnityEngine.MonoBehaviour
 /// </summary>
 public class Subscriber : UnityEngine.MonoBehaviour
 {
+    private static void Subscribe(string message, Mediator.Callback callback)
+    {
+        Mediator.Callback cb;
 
+        if (Mediator.GetInstance.subscriptions.TryGetValue(message, out cb))
+        {
+            cb += callback;
+        }
+
+        else
+        {
+            Mediator.GetInstance.subscriptions.Add(message, callback);
+        }
+    }
+
+    private static void Unsubscribe(string message, Mediator.Callback callback)
+    {
+        Mediator.Callback cb;
+
+        if (Mediator.GetInstance.subscriptions.TryGetValue(message, out cb))
+        {
+            cb -= callback;
+        }
+    }
 }
 
 #endregion
