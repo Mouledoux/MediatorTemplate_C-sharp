@@ -21,6 +21,8 @@ public class Mediator : UnityEngine.MonoBehaviour
 {
     #region Singleton
 
+    private Mediator() { }
+
     private static Mediator instance;
 
     public static Mediator GetInstance
@@ -52,7 +54,6 @@ public class Mediator : UnityEngine.MonoBehaviour
     /// <param name="data">Predefined data Packet to act as potential arguments for subscription methods</param>
     public delegate void Callback(Packet data);
 
-    private Mediator() { }
 
     private void Awake()
     {
@@ -115,90 +116,10 @@ public class Mediator : UnityEngine.MonoBehaviour
 #endregion
 
 
+
 /* Non-Unity Version
 #region Non-Unity
 
-public class Mediator
-{
-    #region Singleton
-
-    private static Mediator instance;
-
-    public static Mediator GetInstance
-    {
-        get
-        {
-            if (instance == null)
-            {
-                instance = new Mediator();
-            }
-
-            return instance;
-        }
-    }
-
-    #endregion
-
-    /// <summary>
-    /// Callback delegate to be used by all subscribers
-    /// </summary>
-    /// <param name="data">Predefined data Packet to act as potential arguments for subscription methods</param>
-    public delegate void Callback(Packet data);
-
-    private Mediator() { }
-
-    private System.Collections.Generic.Dictionary<string, Callback> subscriptions =
-        new System.Collections.Generic.Dictionary<string, Callback>();
-
-
-    public class Publisher
-    {
-        protected void NotifySubscribers(string message, Packet data)
-        {
-            Callback cb;
-
-            if (GetInstance.subscriptions.TryGetValue(message, out cb))
-            {
-                cb.Invoke(data);
-            }
-        }
-    }
-
-    public class Subscriber
-    {
-        protected void Subscribe(string message, Callback callback)
-        {
-            Callback cb;
-
-            if (!GetInstance.subscriptions.TryGetValue(message, out cb))
-            {
-                GetInstance.subscriptions.Add(message, cb);
-            }
-
-            cb += callback;
-            GetInstance.subscriptions[message] = cb;
-        }
-
-        protected void Unsubscribe(string message, Callback callback)
-        {
-            Callback cb;
-
-            if (GetInstance.subscriptions.TryGetValue(message, out cb))
-            {
-                cb -= callback;
-
-                if (cb == null)
-                {
-                    GetInstance.subscriptions.Remove(message);
-                }
-                else
-                {
-                    GetInstance.subscriptions[message] = cb;
-                }
-            }
-        }
-    }
-}
 
 #endregion
 //*/
