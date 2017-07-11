@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestPub : Publisher
+public class TestPub : Mediator.Publisher
 {
     public string msg;
 

@@ -28,7 +28,9 @@ public class Mediator : UnityEngine.MonoBehaviour
         get
         {
             if (instance == null)
+            {
                 instance = FindObjectOfType<Mediator>();
+            }
 
             return instance;
         }
@@ -37,12 +39,12 @@ public class Mediator : UnityEngine.MonoBehaviour
     private void InitializeSingleton()
     {
         if (GetInstance != this)
+        {
             Destroy(gameObject);
+        }
     }
 
     #endregion
-
-    #region Callback Delegate
 
     /// <summary>
     /// Callback delegate to be used by all subscribers
@@ -50,69 +52,61 @@ public class Mediator : UnityEngine.MonoBehaviour
     /// <param name="data">Predefined data Packet to act as potential arguments for subscription methods</param>
     public delegate void Callback(Packet data);
 
-    #endregion
-
     private Mediator() { }
 
     private void Awake()
     {
         InitializeSingleton();
     }
-        
-    public System.Collections.Generic.Dictionary<string, Callback> subscriptions =
+
+    private System.Collections.Generic.Dictionary<string, Callback> subscriptions =
         new System.Collections.Generic.Dictionary<string, Callback>();
-}
 
 
-
-/// <summary>
-/// 
-/// </summary>
-public class Publisher : UnityEngine.MonoBehaviour
-{
-    protected static void NotifySubscribers(string message, Packet data)
+    public class Publisher : UnityEngine.MonoBehaviour
     {
-        Mediator.Callback cb;
-
-        if (Mediator.GetInstance.subscriptions.TryGetValue(message, out cb))
+        protected void NotifySubscribers(string message, Packet data)
         {
-            cb.Invoke(data);
-        }
-    }
-}
+            Callback cb;
 
-
-/// <summary>
-/// 
-/// </summary>
-public class Subscriber : UnityEngine.MonoBehaviour
-{
-    protected static void Subscribe(string message, Mediator.Callback callback)
-    {
-        Mediator.Callback cb;
-
-        if (Mediator.GetInstance.subscriptions.TryGetValue(message, out cb))
-        { 
-            Mediator.GetInstance.subscriptions[message] += callback;
-        }
-
-        else
-        {
-            Mediator.GetInstance.subscriptions.Add(message, callback);
-        }
-    }
-
-    protected static void Unsubscribe(string message, Mediator.Callback callback)
-    {
-        Mediator.Callback cb;
-
-        if (Mediator.GetInstance.subscriptions.TryGetValue(message, out cb))
-        {
-            Mediator.GetInstance.subscriptions[message] -= callback;
-
-            if (Mediator.GetInstance.subscriptions.TryGetValue(message, out cb))
+            if (GetInstance.subscriptions.TryGetValue(message, out cb))
             {
-                Mediator.GetInstance.subscriptions.Remove(message);
+                cb.Invoke(data);
+            }
+        }
+    }
+
+    public class Subscriber : UnityEngine.MonoBehaviour
+    {
+        protected void Subscribe(string message, Callback callback)
+        {
+            Callback cb;
+
+            if (!GetInstance.subscriptions.TryGetValue(message, out cb))
+            {
+                GetInstance.subscriptions.Add(message, cb);
+            }
+
+            cb += callback;
+            GetInstance.subscriptions[message] = cb;
+        }
+
+        protected void Unsubscribe(string message, Callback callback)
+        {
+            Callback cb;
+
+            if (GetInstance.subscriptions.TryGetValue(message, out cb))
+            {
+                cb -= callback;
+
+                if (cb == null)
+                {
+                    GetInstance.subscriptions.Remove(message);
+                }
+                else
+                {
+                    GetInstance.subscriptions[message] = cb;
+                }
             }
         }
     }
@@ -121,10 +115,94 @@ public class Subscriber : UnityEngine.MonoBehaviour
 #endregion
 
 
+/* Non-Unity Version
+#region Non-Unity
+
+public class Mediator
+{
+    #region Singleton
+
+    private static Mediator instance;
+
+    public static Mediator GetInstance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = new Mediator();
+            }
+
+            return instance;
+        }
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Callback delegate to be used by all subscribers
+    /// </summary>
+    /// <param name="data">Predefined data Packet to act as potential arguments for subscription methods</param>
+    public delegate void Callback(Packet data);
+
+    private Mediator() { }
+
+    private System.Collections.Generic.Dictionary<string, Callback> subscriptions =
+        new System.Collections.Generic.Dictionary<string, Callback>();
 
 
-#region non-Unity
+    public class Publisher
+    {
+        protected void NotifySubscribers(string message, Packet data)
+        {
+            Callback cb;
+
+            if (GetInstance.subscriptions.TryGetValue(message, out cb))
+            {
+                cb.Invoke(data);
+            }
+        }
+    }
+
+    public class Subscriber
+    {
+        protected void Subscribe(string message, Callback callback)
+        {
+            Callback cb;
+
+            if (!GetInstance.subscriptions.TryGetValue(message, out cb))
+            {
+                GetInstance.subscriptions.Add(message, cb);
+            }
+
+            cb += callback;
+            GetInstance.subscriptions[message] = cb;
+        }
+
+        protected void Unsubscribe(string message, Callback callback)
+        {
+            Callback cb;
+
+            if (GetInstance.subscriptions.TryGetValue(message, out cb))
+            {
+                cb -= callback;
+
+                if (cb == null)
+                {
+                    GetInstance.subscriptions.Remove(message);
+                }
+                else
+                {
+                    GetInstance.subscriptions[message] = cb;
+                }
+            }
+        }
+    }
+}
+
 #endregion
+//*/
+
 
 
 

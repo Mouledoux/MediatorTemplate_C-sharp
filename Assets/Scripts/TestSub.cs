@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestSub : Subscriber
+public class TestSub : Mediator.Subscriber
 {
     public string msg;
     Mediator.Callback onNotify;
@@ -12,14 +12,16 @@ public class TestSub : Subscriber
     {
         onNotify2 += ByeWorld;
         onNotify += HelloWorld;
-        //Subscribe(msg, onNotify2);
-        Subscribe(msg, onNotify);
+        Subscribe(msg, onNotify2);
+        //Subscribe(msg, onNotify);
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.U))
             Unsubscribe(msg, onNotify);
+        if (Input.GetKeyDown(KeyCode.I))
+            Unsubscribe(msg, onNotify2);
     }
 
     void HelloWorld(Packet p)
