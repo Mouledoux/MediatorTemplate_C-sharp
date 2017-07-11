@@ -9,13 +9,8 @@
  *  
  *  Notes:
  *  While intented to be used with Unity3D(5.5.0f3),
- *  a non-Unity version will be commented out below.
- *  
- *  !!!NOTICE!!!: Make sure that ONLY Unity, OR non-Unity is active at once.
+ *  non-Unity version will be commented out below Unity specific code
  */
-
-
-#region Unity
 
 public class Mediator : UnityEngine.MonoBehaviour
 {
@@ -31,40 +26,58 @@ public class Mediator : UnityEngine.MonoBehaviour
         {
             if (instance == null)
             {
-                instance = FindObjectOfType<Mediator>();
+                instance = FindObjectOfType<Mediator>();    // Unity Version
+                //instance = new Mediator();                // Non-Unity Version
             }
 
             return instance;
         }
     }
 
+    #region Unity Specific Methods
+    /// !!! READ ME !!!
+    /// Both of the methods below:
+    /// InitializeSingleton and Awake,
+    /// are only used by Unity3D,
+    /// and should be removed otherwise
+
+        /// !!! ATTENTION !!! ///
+    //* <--- Remove one '/' to disable the code below
+
+    /// <summary>
+    /// Used in the Unity 'Awake' method to remove duplicate Mediators from the scene
+    /// </summary>
     private void InitializeSingleton()
     {
+        // Checks if the static instace is this instance
         if (GetInstance != this)
         {
+            // And self-destructs if not
             Destroy(gameObject);
         }
     }
 
-    #endregion
+    private void Awake()
+    {
+        // Initializes on Awake to remove duplicates before anything else
+        InitializeSingleton();
+    }
+    //*/// End of Unity specific methods
+    #endregion Unity Specific Methods
+
+    #endregion Singleton
 
     /// <summary>
     /// Callback delegate to be used by all subscribers
     /// </summary>
-    /// <param name="data">Predefined data Packet to act as potential arguments for subscription methods</param>
+    /// <param name="data">Predefined data Packet to act as potential arguments for subscriptions</param>
     public delegate void Callback(Packet data);
-
-
-    private void Awake()
-    {
-        InitializeSingleton();
-    }
 
     private System.Collections.Generic.Dictionary<string, Callback> subscriptions =
         new System.Collections.Generic.Dictionary<string, Callback>();
 
 
-    public class Publisher : UnityEngine.MonoBehaviour
+    public class Publisher : UnityEngine.MonoBehaviour // <--- No inheritance is necessary for non-Unity projects
     {
         protected void NotifySubscribers(string message, Packet data)
         {
@@ -77,7 +90,8 @@ public class Mediator : UnityEngine.MonoBehaviour
         }
     }
 
-    public class Subscriber : UnityEngine.MonoBehaviour
+
+    public class Subscriber : UnityEngine.MonoBehaviour // <--- No inheritance is necessary for non-Unity projects
     {
         protected void Subscribe(string message, Callback callback)
         {
@@ -113,24 +127,8 @@ public class Mediator : UnityEngine.MonoBehaviour
     }
 }
 
-#endregion
-
-
-
-/* Non-Unity Version
-#region Non-Unity
-
-
-#endregion
-//*/
-
-
-
-
-
 /// !!! ATTENTION !!!
-/// Everything below this point is used by both Unity, and non-Unity
-/// DO NOT MODIFY ANY OF THE HELPER CLASSES, OR THEIR METHODS
+/// DO NOT MODIFY ANY OF THE CLASSES, OR THEIR METHODS BELOW THIS POINT
 #region Helper Classes
 
 /// <summary>
@@ -182,4 +180,4 @@ public class Packet
     }
 }
 
-#endregion
+#endregion Helper Classes
