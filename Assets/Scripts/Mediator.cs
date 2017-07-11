@@ -8,12 +8,18 @@
  *  
  *  
  *  Notes:
- *  While intented to be used with Unity3D(5.5.0f3),
- *  non-Unity version will be commented out below Unity specific code
+ *  While intented to be used with Unity3D,
+ *  non-Unity versions will be commented out below Unity specific code
  */
 
-public class Mediator : UnityEngine.MonoBehaviour
+ /// <summary>
+ /// Base class for all mediation.
+ /// </summary>
+public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance is necessary for non-Unity projects and should be removed
 {
+    /// !!! READ ME !!! ///
+    /// The below code is a standard singleton except for 1 line which is Unity3D specific
+    /// The line is in the GetInstance getter, and MUST be changed to work outside of Unity3D
     #region Singleton
 
     private Mediator() { }
@@ -26,20 +32,20 @@ public class Mediator : UnityEngine.MonoBehaviour
         {
             if (instance == null)
             {
-                instance = FindObjectOfType<Mediator>();    // Unity Version
-                //instance = new Mediator();                // Non-Unity Version
+                instance = FindObjectOfType<Mediator>();    // Unity Version, must be removed for non-Unity projects
+                //instance = new Mediator();                // Non-Unity Version, must be removed for Unity projects
             }
 
             return instance;
         }
     }
 
-    #region Unity Specific Methods
     /// !!! READ ME !!!
     /// Both of the methods below:
     /// InitializeSingleton and Awake,
     /// are only used by Unity3D,
     /// and should be removed otherwise
+    #region Unity Specific Singleton Methods
 
         /// !!! ATTENTION !!! ///
     //* <--- Remove one '/' to disable the code below
@@ -62,8 +68,9 @@ public class Mediator : UnityEngine.MonoBehaviour
         // Initializes on Awake to remove duplicates before anything else
         InitializeSingleton();
     }
+
     //*/// End of Unity specific methods
-    #endregion Unity Specific Methods
+    #endregion Unity Specific Singleton Methods
 
     #endregion Singleton
 
@@ -73,11 +80,32 @@ public class Mediator : UnityEngine.MonoBehaviour
     /// <param name="data">Predefined data Packet to act as potential arguments for subscriptions</param>
     public delegate void Callback(Packet data);
 
+    /// <summary>
+    /// Dictionary of subscription strings and associated delegate callbacks
+    /// </summary>
     private System.Collections.Generic.Dictionary<string, Callback> subscriptions =
         new System.Collections.Generic.Dictionary<string, Callback>();
 
+    
 
-    public class Publisher : UnityEngine.MonoBehaviour // <--- No inheritance is necessary for non-Unity projects
+    /// !!! READ ME !!! ///
+    /// Below are the base classes for the Publishers, and Subscribers
+    /// Any entity that will be broadcasting messages MUST inherit from Mediator.Publisher
+    /// Any entity that will be listining for messages MUST inherit from Mediator.Subscriber
+    /// 
+    /// Because Publisher and Subscriber are classes that must be inherited,
+    /// no single entity can be both a Publisher, AND a Subscriber
+    /// 
+    /// Example: A button that opens a menu, and changes color
+    /// The button would be a Publisher, and the menu a Subscriber.
+    /// The color change should be handeled by the button internally, OR
+    /// the button would have a 'color' element that is a Subscriber
+    /// the button is NOT both a Publisher AND Subscriber
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class Publisher : UnityEngine.MonoBehaviour // <--- No inheritance is necessary for non-Unity projects and should be removed
     {
         protected void NotifySubscribers(string message, Packet data)
         {
@@ -91,7 +119,7 @@ public class Mediator : UnityEngine.MonoBehaviour
     }
 
 
-    public class Subscriber : UnityEngine.MonoBehaviour // <--- No inheritance is necessary for non-Unity projects
+    public class Subscriber : UnityEngine.MonoBehaviour // <--- No inheritance is necessary for non-Unity projects and should be removed
     {
         protected void Subscribe(string message, Callback callback)
         {
@@ -132,7 +160,7 @@ public class Mediator : UnityEngine.MonoBehaviour
 #region Helper Classes
 
 /// <summary>
-/// Collecion of basic variable to be sent via Callbacks
+/// Collecion of basic variables to be sent via delegates
 /// </summary>
 public class Packet
 {
@@ -155,6 +183,7 @@ public class Packet
 
     /// <summary>
     /// Default constructor
+    /// To be used to send empty packets
     /// </summary>
     public Packet()
     {
