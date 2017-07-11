@@ -103,51 +103,88 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
     /// the button is NOT both a Publisher AND Subscriber
 
     /// <summary>
-    /// 
+    /// Base class for all entities that will be broadcasting
     /// </summary>
     public class Publisher : UnityEngine.MonoBehaviour // <--- No inheritance is necessary for non-Unity projects and should be removed
     {
+        /// <summary>
+        /// Checks to see if their are any Subscribers to the broadcasted message
+        /// and invokes ALL callbacks associated with it
+        /// </summary>
+        /// <param name="message">The message to be broadcasted (case sensitive)</param>
+        /// <param name="data">Packet of information to be used by ALL recieving parties</param>
         protected void NotifySubscribers(string message, Packet data)
         {
+            // Temporary delegate container for modifying subscription delegates 
             Callback cb;
 
+            // Check to see if the message has any valid subscriptions
             if (GetInstance.subscriptions.TryGetValue(message, out cb))
             {
+                // Invokes ALL associated delegates with the data Packet as the argument
                 cb.Invoke(data);
             }
         }
     }
 
-
+    /// <summary>
+    /// Base class for all entities that will be listing for broadcasts
+    /// </summary>
     public class Subscriber : UnityEngine.MonoBehaviour // <--- No inheritance is necessary for non-Unity projects and should be removed
     {
+        /// <summary>
+        /// Links a custom delegate to a message that may be breadcasted via a Publisher
+        /// </summary>
+        /// <param name="message">The message to subscribe to (case sensitive)</param>
+        /// <param name="callback">The delegate to be linked to the broadcast message</param>
         protected void Subscribe(string message, Callback callback)
         {
+            // Temporary delegate container for modifying subscription delegates 
             Callback cb;
 
+            // Check to see if there is not already a subscription to this message
             if (!GetInstance.subscriptions.TryGetValue(message, out cb))
             {
+                // If there is not, then make one with the message and currently empty callback delegate
                 GetInstance.subscriptions.Add(message, cb);
             }
 
+            /// If the subscription does already exist,
+            /// then cb is populated with all associated delegates,
+            /// if it does not, cb is empty.
+
+            // Add the delegate to cb (new or populated)
             cb += callback;
+            // Set the delegate linked to the message to cb
             GetInstance.subscriptions[message] = cb;
         }
 
+
         protected void Unsubscribe(string message, Callback callback)
         {
+            // Temporary delegate container for modifying subscription delegates 
             Callback cb;
 
+
+            // Check to see if there is a subscription to this message
             if (GetInstance.subscriptions.TryGetValue(message, out cb))
             {
+                /// If the subscription does already exist,
+                /// then cb is populated with all associated delegates.
+                /// Otherwise nothing will happen
+                
+                // Remove the selected delegate from the callback
                 cb -= callback;
 
+                // Check the modified cb to see if there are any delegates left
                 if (cb == null)
-                {
+                {   
+                    // If tere is not, then remove the subscription completely
                     GetInstance.subscriptions.Remove(message);
                 }
                 else
                 {
+                    // If there are some left, reset the callback to the now lesser cb
                     GetInstance.subscriptions[message] = cb;
                 }
             }
