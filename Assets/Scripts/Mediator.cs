@@ -52,9 +52,6 @@ public class Mediator : UnityEngine.MonoBehaviour
 
     #endregion
 
-    /// <summary>
-    /// Private constructor for singleton
-    /// </summary>
     private Mediator() { }
 
     private void Awake()
@@ -73,7 +70,7 @@ public class Mediator : UnityEngine.MonoBehaviour
 /// </summary>
 public class Publisher : UnityEngine.MonoBehaviour
 {
-    private static void NotifySubscribers(string message, Packet data)
+    protected static void NotifySubscribers(string message, Packet data)
     {
         Mediator.Callback cb;
 
@@ -90,13 +87,13 @@ public class Publisher : UnityEngine.MonoBehaviour
 /// </summary>
 public class Subscriber : UnityEngine.MonoBehaviour
 {
-    private static void Subscribe(string message, Mediator.Callback callback)
+    protected static void Subscribe(string message, Mediator.Callback callback)
     {
         Mediator.Callback cb;
 
         if (Mediator.GetInstance.subscriptions.TryGetValue(message, out cb))
-        {
-            cb += callback;
+        { 
+            Mediator.GetInstance.subscriptions[message] += callback;
         }
 
         else
@@ -105,13 +102,18 @@ public class Subscriber : UnityEngine.MonoBehaviour
         }
     }
 
-    private static void Unsubscribe(string message, Mediator.Callback callback)
+    protected static void Unsubscribe(string message, Mediator.Callback callback)
     {
         Mediator.Callback cb;
 
         if (Mediator.GetInstance.subscriptions.TryGetValue(message, out cb))
         {
-            cb -= callback;
+            Mediator.GetInstance.subscriptions[message] -= callback;
+
+            if (Mediator.GetInstance.subscriptions.TryGetValue(message, out cb))
+            {
+                Mediator.GetInstance.subscriptions.Remove(message);
+            }
         }
     }
 }
@@ -136,38 +138,49 @@ public class Subscriber : UnityEngine.MonoBehaviour
 /// Collecion of basic variable to be sent via Callbacks
 /// </summary>
 public class Packet
-    {
-        /// <summary>
-        /// All of the intigers to be used
-        /// </summary>
-        private int[] ints;
-        /// <summary>
-        /// All of the boolens to be used
-        /// </summary>
-        private bool[] bools;
-        /// <summary>
-        /// All of the floating point numbers to be used
-        /// </summary>
-        private float[] floats;
-        /// <summary>
-        /// All of the text strings to be used
-        /// </summary>
-        private string[] strings;
+{
+    /// <summary>
+    /// All of the intigers to be used
+    /// </summary>
+    private int[] ints;
+    /// <summary>
+    /// All of the boolens to be used
+    /// </summary>
+    private bool[] bools;
+    /// <summary>
+    /// All of the floating point numbers to be used
+    /// </summary>
+    private float[] floats;
+    /// <summary>
+    /// All of the text strings to be used
+    /// </summary>
+    private string[] strings;
 
-        /// <summary>
-        /// Constructor to ensure all arrays are set, even if they are empty
-        /// </summary>
-        /// <param name="ints">Predefined array of ints</param>
-        /// <param name="bools">Predefined array of bools</param>
-        /// <param name="floats">Predefined array of floats</param>
-        /// <param name="strings">Predefined array of strings</param>
-        public Packet(int[] ints, bool[] bools, float[] floats, string[] strings)
-        {
-            this.ints = ints;
-            this.bools = bools;
-            this.floats = floats;
-            this.strings = strings;
-        }
+    /// <summary>
+    /// Default constructor
+    /// </summary>
+    public Packet()
+    {
+        this.ints = new int[0];
+        this.bools = new bool[0];
+        this.floats = new float[0];
+        this.strings = new string[0];
     }
+
+    /// <summary>
+    /// Constructor to ensure all arrays are set
+    /// </summary>
+    /// <param name="ints">Predefined array of ints</param>
+    /// <param name="bools">Predefined array of bools</param>
+    /// <param name="floats">Predefined array of floats</param>
+    /// <param name="strings">Predefined array of strings</param>
+    public Packet(int[] ints, bool[] bools, float[] floats, string[] strings)
+    {
+        this.ints = ints;
+        this.bools = bools;
+        this.floats = floats;
+        this.strings = strings;
+    }
+}
 
 #endregion
