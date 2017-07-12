@@ -181,7 +181,12 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
         }
 
 
-  
+        /// <summary>
+        /// Unlinks a custom delegate from a message in a SPECIFIC subscription dictionary
+        /// </summary>
+        /// <param name="container">Refrence to the dictionary of subscriptions we want to modify</param>
+        /// <param name="message">The message to unsubscribe from (case sensitive)</param>
+        /// <param name="callback">The delegate to be removed from the broadcast message</param>
         private void Unsubscribe(ref System.Collections.Generic.Dictionary<string, Callback> container, string message, Callback callback)
         {
             // Temporary delegate container for modifying subscription delegates 
@@ -211,9 +216,16 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
             }
         }
 
+        /// <summary>
+        /// Unlinks a custom delegate from a message that may be breadcasted via a Publisher
+        /// </summary>
+        /// <param name="message">The message to unsubscribe from (case sensitive)</param>
+        /// <param name="callback">The delegate to be unlinked from the broadcast message</param>
         protected void Unsubscribe(string message, Callback callback)
         {
+            // First, remove the subscription from the internal records
             Unsubscribe(ref totalSubscriptions, message, callback);
+            // Then, remove the subcription from the public records
             Unsubscribe(ref GetInstance.subscriptions, message, callback);
         }
 
