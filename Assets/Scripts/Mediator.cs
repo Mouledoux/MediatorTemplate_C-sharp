@@ -133,23 +133,17 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
     public class Subscriber : UnityEngine.MonoBehaviour // <--- No inheritance is necessary for non-Unity projects and should be removed
     {
         /// <summary>
-        /// 
+        /// Personal, internal record of all active subscriptions
         /// </summary>
        private System.Collections.Generic.Dictionary<string, Callback> totalSubscriptions =
             new System.Collections.Generic.Dictionary<string, Callback>();
 
-
         /// <summary>
-        /// Links a custom delegate to a message that may be breadcasted via a Publisher
+        /// Links a custom delegate to a message in a SPECIFIC subscription dictionary
         /// </summary>
+        /// <param name="container">Refrence to the dictionary of subscriptions we want to modify</param>
         /// <param name="message">The message to subscribe to (case sensitive)</param>
         /// <param name="callback">The delegate to be linked to the broadcast message</param>
-        protected void Subscribe(string message, Callback callback)
-        {
-            Subscribe(ref totalSubscriptions, message, callback);
-            Subscribe(ref GetInstance.subscriptions, message, callback);
-        }
-
         private void Subscribe(ref System.Collections.Generic.Dictionary<string, Callback> container, string message, Callback callback)
         {
             // Temporary delegate container for modifying subscription delegates 
@@ -171,6 +165,21 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
             // Set the delegate linked to the message to cb
             container[message] = cb;
         }
+
+
+        /// <summary>
+        /// Links a custom delegate to a message that may be breadcasted via a Publisher
+        /// </summary>
+        /// <param name="message">The message to subscribe to (case sensitive)</param>
+        /// <param name="callback">The delegate to be linked to the broadcast message</param>
+        protected void Subscribe(string message, Callback callback)
+        {
+            // First, adds the subscription to the internaal records
+            Subscribe(ref totalSubscriptions, message, callback);
+            // Then, adds the subcription to the public records
+            Subscribe(ref GetInstance.subscriptions, message, callback);
+        }
+
 
 
         protected void Unsubscribe(string message, Callback callback)
