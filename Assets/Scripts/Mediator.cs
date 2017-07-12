@@ -192,8 +192,6 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
                 {   
                     // If tere is not, then remove the subscription completely
                     GetInstance.subscriptions.Remove(message);
-
-                    print("empty");
                 }
                 else
                 {
