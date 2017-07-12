@@ -254,7 +254,7 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
 
 /// !!! ATTENTION !!!
 ///
-#region Packet Classe
+#region Packet Class
 
 /// <summary>
 /// Collecion of basic variables to be sent via delegates
@@ -306,4 +306,4 @@ public class Packet
     }
 }
 
-#endregion Packet Classe
+#endregion Packet Class
