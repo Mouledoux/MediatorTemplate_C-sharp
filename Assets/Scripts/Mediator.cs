@@ -132,6 +132,10 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
     /// </summary>
     public class Subscriber : UnityEngine.MonoBehaviour // <--- No inheritance is necessary for non-Unity projects and should be removed
     {
+       private System.Collections.Generic.Dictionary<string, Callback> totalSubscriptions =
+            new System.Collections.Generic.Dictionary<string, Callback>();
+
+
         /// <summary>
         /// Links a custom delegate to a message that may be breadcasted via a Publisher
         /// </summary>
@@ -165,7 +169,6 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
             // Temporary delegate container for modifying subscription delegates 
             Callback cb;
 
-
             // Check to see if there is a subscription to this message
             if (GetInstance.subscriptions.TryGetValue(message, out cb))
             {
@@ -189,12 +192,19 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
                 }
             }
         }
+
+
+        protected void UnsubcribeAll(string message)
+        {
+            Callback cb;
+            totalSubscriptions.TryGetValue(message, out cb);
+        }
     }
 }
 
 /// !!! ATTENTION !!!
-/// DO NOT MODIFY ANY OF THE CLASSES, OR THEIR METHODS BELOW THIS POINT
-#region Helper Classes
+///
+#region Packet Classe
 
 /// <summary>
 /// Collecion of basic variables to be sent via delegates
@@ -204,19 +214,19 @@ public class Packet
     /// <summary>
     /// All of the intigers to be used
     /// </summary>
-    private int[] ints;
+    public int[] ints;
     /// <summary>
     /// All of the boolens to be used
     /// </summary>
-    private bool[] bools;
+    public bool[] bools;
     /// <summary>
     /// All of the floating point numbers to be used
     /// </summary>
-    private float[] floats;
+    public float[] floats;
     /// <summary>
     /// All of the text strings to be used
     /// </summary>
-    private string[] strings;
+    public string[] strings;
 
     /// <summary>
     /// Default constructor
@@ -246,4 +256,4 @@ public class Packet
     }
 }
 
-#endregion Helper Classes
+#endregion Packet Classe
