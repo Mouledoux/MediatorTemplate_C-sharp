@@ -161,6 +161,14 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
             cb += callback;
             // Set the delegate linked to the message to cb
             GetInstance.subscriptions[message] = cb;
+
+
+            if(!totalSubscriptions.TryGetValue(message, out cb))
+            {
+                totalSubscriptions.Add(message, cb);
+            }
+            cb += callback;
+            totalSubscriptions[message] = cb;
         }
 
 
@@ -184,6 +192,8 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
                 {   
                     // If tere is not, then remove the subscription completely
                     GetInstance.subscriptions.Remove(message);
+
+                    print("empty");
                 }
                 else
                 {
@@ -194,10 +204,17 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
         }
 
 
-        protected void UnsubcribeAll(string message)
+        protected void UnsubcribeAllFrom(string message)
         {
-            Callback cb;
-            totalSubscriptions.TryGetValue(message, out cb);
+            Unsubscribe(message, totalSubscriptions[message]);
+        }
+        
+        protected void UnsubscribeAll()
+        {
+            foreach(string message in totalSubscriptions.Keys)
+            {
+                UnsubcribeAllFrom(message);
+            }
         }
     }
 }

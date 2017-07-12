@@ -10,10 +10,11 @@ public class TestSub : Mediator.Subscriber
 
     private void Start()
     {
-        onNotify2 += ByeWorld;
         onNotify += HelloWorld;
+        Subscribe(msg, onNotify);
+
+        onNotify2 += ByeWorld;
         Subscribe(msg, onNotify2);
-        //Subscribe(msg, onNotify);
     }
 
     private void Update()
@@ -22,6 +23,9 @@ public class TestSub : Mediator.Subscriber
             Unsubscribe(msg, onNotify);
         if (Input.GetKeyDown(KeyCode.I))
             Unsubscribe(msg, onNotify2);
+
+        if (Input.GetKeyDown(KeyCode.Z))
+            UnsubcribeAllFrom(msg);
     }
 
     void HelloWorld(Packet p)
@@ -31,5 +35,10 @@ public class TestSub : Mediator.Subscriber
     void ByeWorld(Packet p)
     {
         print(name + " Bye World");
+    }
+
+    private void OnDestroy()
+    {
+        UnsubscribeAll();
     }
 }
