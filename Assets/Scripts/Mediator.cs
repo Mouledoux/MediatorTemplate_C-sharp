@@ -138,6 +138,7 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
        private System.Collections.Generic.Dictionary<string, Callback> totalSubscriptions =
             new System.Collections.Generic.Dictionary<string, Callback>();
 
+
         /// <summary>
         /// Links a custom delegate to a message in a SPECIFIC subscription dictionary
         /// </summary>
@@ -166,7 +167,6 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
             container[message] = cb;
         }
 
-
         /// <summary>
         /// Links a custom delegate to a message that may be breadcasted via a Publisher
         /// </summary>
@@ -181,14 +181,14 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
         }
 
 
-
-        protected void Unsubscribe(string message, Callback callback)
+  
+        private void Unsubscribe(ref System.Collections.Generic.Dictionary<string, Callback> container, string message, Callback callback)
         {
             // Temporary delegate container for modifying subscription delegates 
             Callback cb;
 
             // Check to see if there is a subscription to this message
-            if (GetInstance.subscriptions.TryGetValue(message, out cb))
+            if (container.TryGetValue(message, out cb))
             {
                 /// If the subscription does already exist,
                 /// then cb is populated with all associated delegates.
@@ -201,14 +201,20 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
                 if (cb == null)
                 {   
                     // If tere is not, then remove the subscription completely
-                    GetInstance.subscriptions.Remove(message);
+                    container.Remove(message);
                 }
                 else
                 {
                     // If there are some left, reset the callback to the now lesser cb
-                    GetInstance.subscriptions[message] = cb;
+                    container[message] = cb;
                 }
             }
+        }
+
+        protected void Unsubscribe(string message, Callback callback)
+        {
+            Unsubscribe(ref totalSubscriptions, message, callback);
+            Unsubscribe(ref GetInstance.subscriptions, message, callback);
         }
 
 
@@ -222,8 +228,9 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
         {
             foreach(string message in totalSubscriptions.Keys)
             {
-                UnsubcribeAllFrom(message);
+                Unsubscribe(ref GetInstance.subscriptions, message, totalSubscriptions[message]);
             }
+            totalSubscriptions.Clear();
         }
     }
 }
