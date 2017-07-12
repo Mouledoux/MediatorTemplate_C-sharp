@@ -132,6 +132,9 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
     /// </summary>
     public class Subscriber : UnityEngine.MonoBehaviour // <--- No inheritance is necessary for non-Unity projects and should be removed
     {
+        /// <summary>
+        /// 
+        /// </summary>
        private System.Collections.Generic.Dictionary<string, Callback> totalSubscriptions =
             new System.Collections.Generic.Dictionary<string, Callback>();
 
@@ -171,6 +174,28 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
             totalSubscriptions[message] = cb;
         }
 
+        private void Subscribe(ref System.Collections.Generic.Dictionary<string, Callback> container, string message, Callback callback)
+        {
+            // Temporary delegate container for modifying subscription delegates 
+            Callback cb;
+            
+            // Check to see if there is not already a subscription to this message
+            if (!container.TryGetValue(message, out cb))
+            {
+                // If there is not, then make one with the message and currently empty callback delegate
+                container.Add(message, cb);
+            }
+
+            /// If the subscription does already exist,
+            /// then cb is populated with all associated delegates,
+            /// if it does not, cb is empty.
+
+            // Add the delegate to cb (new or populated)
+            cb += callback;
+            // Set the delegate linked to the message to cb
+            container[message] = cb;
+        }
+
 
         protected void Unsubscribe(string message, Callback callback)
         {
@@ -207,6 +232,7 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
             Unsubscribe(message, totalSubscriptions[message]);
         }
         
+
         protected void UnsubscribeAll()
         {
             foreach(string message in totalSubscriptions.Keys)
