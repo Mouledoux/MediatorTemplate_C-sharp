@@ -146,34 +146,6 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
         /// <param name="callback">The delegate to be linked to the broadcast message</param>
         protected void Subscribe(string message, Callback callback)
         {
-            //// Temporary delegate container for modifying subscription delegates 
-            //Callback cb;
-
-            //// Check to see if there is not already a subscription to this message
-            //if (!GetInstance.subscriptions.TryGetValue(message, out cb))
-            //{
-            //    // If there is not, then make one with the message and currently empty callback delegate
-            //    GetInstance.subscriptions.Add(message, cb);
-            //}
-
-            ///// If the subscription does already exist,
-            ///// then cb is populated with all associated delegates,
-            ///// if it does not, cb is empty.
-
-            //// Add the delegate to cb (new or populated)
-            //cb += callback;
-            //// Set the delegate linked to the message to cb
-            //GetInstance.subscriptions[message] = cb;
-
-
-            //if(!totalSubscriptions.TryGetValue(message, out cb))
-            //{
-            //    totalSubscriptions.Add(message, cb);
-            //}
-            //cb += callback;
-            //totalSubscriptions[message] = cb;
-
-
             Subscribe(ref totalSubscriptions, message, callback);
             Subscribe(ref GetInstance.subscriptions, message, callback);
         }
