@@ -25,20 +25,15 @@ public class TestSub : Mediator.Subscriber
             Unsubscribe(msg, onNotify2);
 
         if (Input.GetKeyDown(KeyCode.Z))
-            UnsubcribeAllFrom(msg);
+            UnsubscribeAll();
     }
 
     void HelloWorld(Packet p)
     {
-        print(name + " Hello World");
+        transform.Translate(Vector3.up);
     }
     void ByeWorld(Packet p)
     {
-        print(name + " Bye World");
-    }
-
-    private void OnDestroy()
-    {
-        UnsubscribeAll();
+        transform.Rotate(Vector3.right);
     }
 }
