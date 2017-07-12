@@ -30,7 +30,7 @@ public class TestSub : Mediator.Subscriber
 
     void HelloWorld(Packet p)
     {
-        transform.Translate(Vector3.up);
+        transform.Translate(Vector3.up * name.Length);
     }
     void ByeWorld(Packet p)
     {
