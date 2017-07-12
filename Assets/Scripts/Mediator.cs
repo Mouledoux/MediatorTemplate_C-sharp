@@ -24,19 +24,19 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
 
     private Mediator() { }
 
-    private static Mediator instance;
+    private static Mediator _instance;
 
-    public static Mediator GetInstance
+    public static Mediator instance
     {
         get
         {
-            if (instance == null)
+            if (_instance == null)
             {
-                instance = FindObjectOfType<Mediator>();    // Unity Version, must be removed for non-Unity projects
+                _instance = FindObjectOfType<Mediator>();    // Unity Version, must be removed for non-Unity projects
                 //instance = new Mediator();                // Non-Unity Version, must be removed for Unity projects
             }
 
-            return instance;
+            return _instance;
         }
     }
 
@@ -56,7 +56,7 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
     private void InitializeSingleton()
     {
         // Checks if the static instace is this instance
-        if (GetInstance != this)
+        if (instance != this)
         {
             // And self-destructs if not
             Destroy(gameObject);
@@ -119,7 +119,7 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
             Callback cb;
 
             // Check to see if the message has any valid subscriptions
-            if (GetInstance.subscriptions.TryGetValue(message, out cb))
+            if (instance.subscriptions.TryGetValue(message, out cb))
             {
                 // Invokes ALL associated delegates with the data Packet as the argument
                 cb.Invoke(data);
@@ -177,7 +177,7 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
             // First, adds the subscription to the internaal records
             Subscribe(ref totalSubscriptions, message, callback);
             // Then, adds the subcription to the public records
-            Subscribe(ref GetInstance.subscriptions, message, callback);
+            Subscribe(ref instance.subscriptions, message, callback);
         }
 
 
@@ -226,7 +226,7 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
             // First, remove the subscription from the internal records
             Unsubscribe(ref totalSubscriptions, message, callback);
             // Then, remove the subcription from the public records
-            Unsubscribe(ref GetInstance.subscriptions, message, callback);
+            Unsubscribe(ref instance.subscriptions, message, callback);
         }
 
         /// <summary>
@@ -245,7 +245,7 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
         {
             foreach(string message in totalSubscriptions.Keys)
             {
-                Unsubscribe(ref GetInstance.subscriptions, message, totalSubscriptions[message]);
+                Unsubscribe(ref instance.subscriptions, message, totalSubscriptions[message]);
             }
             totalSubscriptions.Clear();
         }
