@@ -33,7 +33,7 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
             if (_instance == null)
             {
                 _instance = FindObjectOfType<Mediator>();    // Unity Version, must be removed for non-Unity projects
-                //instance = new Mediator();                // Non-Unity Version, must be removed for Unity projects
+                //_instance = new Mediator();                // Non-Unity Version, must be removed for Unity projects
             }
 
             return _instance;
