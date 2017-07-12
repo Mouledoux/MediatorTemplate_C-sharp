@@ -229,13 +229,18 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
             Unsubscribe(ref GetInstance.subscriptions, message, callback);
         }
 
-
+        /// <summary>
+        /// Unlinks all (local) delegates from given broadcast message
+        /// </summary>
+        /// <param name="message">The message to unsubscribe from (case sensitive)</param>
         protected void UnsubcribeAllFrom(string message)
         {
             Unsubscribe(message, totalSubscriptions[message]);
         }
         
-
+        /// <summary>
+        /// Unlinks all (local) delegates from every (local) broadcast message
+        /// </summary>
         protected void UnsubscribeAll()
         {
             foreach(string message in totalSubscriptions.Keys)
