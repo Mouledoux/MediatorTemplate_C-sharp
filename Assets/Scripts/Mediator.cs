@@ -94,6 +94,8 @@ public sealed class Mediator
         }
     }
 
+
+
     /// <summary>
     /// Base class for all entities that will be listing for broadcasts
     /// </summary>
@@ -133,6 +135,7 @@ public sealed class Mediator
             // Set the delegate linked to the message to cb
             container[message] = cb;
         }
+
 
         /// <summary>
         /// Links a custom delegate to a message that may be breadcasted via a Publisher
@@ -183,6 +186,7 @@ public sealed class Mediator
             }
         }
 
+
         /// <summary>
         /// Unlinks a custom delegate from a message that may be breadcasted via a Publisher
         /// </summary>
@@ -196,6 +200,7 @@ public sealed class Mediator
             Unsubscribe(ref instance.subscriptions, message, callback);
         }
 
+
         /// <summary>
         /// Unlinks all (local) delegates from given broadcast message
         /// </summary>
@@ -205,6 +210,7 @@ public sealed class Mediator
             Unsubscribe(message, totalSubscriptions[message]);
         }
         
+
         /// <summary>
         /// Unlinks all (local) delegates from every (local) broadcast message
         /// </summary>
@@ -214,10 +220,13 @@ public sealed class Mediator
             {
                 Unsubscribe(ref instance.subscriptions, message, totalSubscriptions[message]);
             }
+
             totalSubscriptions.Clear();
         }
     }
 }
+
+
 
 /// !!! ATTENTION !!!
 /// The below class is a "Data Packet" for sharing useful infomation between publishers and subscribers
