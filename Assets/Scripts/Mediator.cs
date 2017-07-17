@@ -9,7 +9,8 @@
  *  
  *  Notes:
  *  While intented to be used with Unity3D,
- *  non-Unity versions will be commented out below Unity specific code
+ *  the only unity specific code is the mono-inheritence for the Publisher and Subscruber class.
+ *  Should that be removed the classes will work in any c# project
  */
 
  /// <summary>
@@ -17,9 +18,7 @@
  /// </summary>
 public sealed class Mediator
 {
-    /// !!! READ ME !!! ///
-    /// The below code is a standard singleton except for 1 line which is Unity3D specific
-    /// The line is in the GetInstance getter, and MUST be changed to work outside of Unity3D
+    /// The below code is a standard singleton
     #region Singleton
 
     private Mediator() { }
@@ -32,7 +31,7 @@ public sealed class Mediator
         {
             if (_instance == null)
             {
-                _instance = new Mediator();                // Non-Unity Version, must be removed for Unity projects
+                _instance = new Mediator(); // Non-Unity Version, must be removed for Unity projects
             }
 
             return _instance;

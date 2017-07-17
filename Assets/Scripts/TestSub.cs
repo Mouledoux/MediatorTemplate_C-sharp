@@ -10,6 +10,8 @@ public class TestSub : Mediator.Subscriber
 
     private void Start()
     {
+        print("Start");
+
         onNotify += HelloWorld;
         Subscribe(msg, onNotify);
 
