@@ -15,7 +15,7 @@
  /// <summary>
  /// Base class for all mediation.
  /// </summary>
-public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance is necessary for non-Unity projects and should be removed
+public sealed class Mediator
 {
     /// !!! READ ME !!! ///
     /// The below code is a standard singleton except for 1 line which is Unity3D specific
@@ -32,46 +32,12 @@ public sealed class Mediator : UnityEngine.MonoBehaviour // <--- No inheritance 
         {
             if (_instance == null)
             {
-                _instance = FindObjectOfType<Mediator>();    // Unity Version, must be removed for non-Unity projects
-                //_instance = new Mediator();                // Non-Unity Version, must be removed for Unity projects
+                _instance = new Mediator();                // Non-Unity Version, must be removed for Unity projects
             }
 
             return _instance;
         }
     }
-
-    /// !!! READ ME !!!
-    /// Both of the methods below:
-    /// InitializeSingleton and Awake,
-    /// are only used by Unity3D,
-    /// and should be removed otherwise
-    #region Unity Specific Singleton Methods
-
-        /// !!! ATTENTION !!! ///
-    //* <--- Remove one '/' to disable the code below
-
-    /// <summary>
-    /// Used in the Unity 'Awake' method to remove duplicate Mediators from the scene
-    /// </summary>
-    private void InitializeSingleton()
-    {
-        // Checks if the static instace is this instance
-        if (instance != this)
-        {
-            // And self-destructs if not
-            Destroy(gameObject);
-        }
-    }
-
-    private void Awake()
-    {
-        // Initializes on Awake to remove duplicates before anything else
-        InitializeSingleton();
-    }
-
-    //*/// End of Unity specific methods
-    #endregion Unity Specific Singleton Methods
-
     #endregion Singleton
 
     /// <summary>
