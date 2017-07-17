@@ -211,6 +211,11 @@ public sealed class Mediator
         }
         
 
+        /// !!! IMPORTANT !!! ///
+        /// The method below - UnsubscribeAll()
+        /// MUST BE CALLED whenever a class inheriting from subscriber is removed
+        /// If it is not, you WILL get NULL REFRENCE ERRORS
+        
         /// <summary>
         /// Unlinks all (local) delegates from every (local) broadcast message
         /// </summary>
@@ -286,3 +291,69 @@ public class Packet
 }
 
 #endregion Packet Class
+
+
+
+
+
+
+/// !!! EXAMPLE CLASSES !!! ///
+/// The classes below are for EXAMPLE ONLY
+/// They are internal and sealed so that in the event they are not removed,
+/// they cannot be used or inherited from
+/// 
+/// HOWEVER, they should still be removed or commented out
+
+internal sealed class Button : Mediator.Publisher
+{
+    // ID of the connected door
+    string linkedDoorID;
+
+    void Interact()
+    {
+        BroadcastMessage(linkedDoorID);
+    }
+
+
+    // The button interaction should be handeled internally
+    // For this example we're using the unity trigger collider
+    private void OnTriggerEnter(UnityEngine.Collider other)
+    {
+        Interact();
+    }
+}
+
+internal sealed class Door : Mediator.Subscriber
+{
+    // Unique ID for this door
+    string uniqueDoorID;
+    // Is the door open?
+    bool isOpen;
+    // What to do when the door is activated
+    Mediator.Callback onInteract;
+
+    // Constructor
+    public Door()
+    {
+        // Set the door to close by default
+        isOpen = false;
+        // Adds the OpenClose method to the interaction delegate
+        onInteract += OpenClose;
+        // Subscribes to its unique ID
+        Subscribe(uniqueDoorID, onInteract);
+    }
+
+    void OpenClose(Packet p)
+    {
+        // Inverts the current door state
+        isOpen = !isOpen;
+    }
+
+    // Deconstructor
+    ~Door()
+    {
+        // When the door is removed via the garbage collector
+        // We NEED to remove its subscriptions from the records
+        UnsubscribeAll();
+    }
+}
