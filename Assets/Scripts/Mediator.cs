@@ -104,7 +104,7 @@ public sealed class Mediator
         /// <summary>
         /// Personal, internal record of all active subscriptions
         /// </summary>
-       private System.Collections.Generic.Dictionary<string, Callback> totalSubscriptions =
+       private System.Collections.Generic.Dictionary<string, Callback> localSubscriptions =
             new System.Collections.Generic.Dictionary<string, Callback>();
 
 
@@ -145,7 +145,7 @@ public sealed class Mediator
         protected void Subscribe(string message, Callback callback)
         {
             // First, adds the subscription to the internaal records
-            Subscribe(ref totalSubscriptions, message, callback);
+            Subscribe(ref localSubscriptions, message, callback);
             // Then, adds the subcription to the public records
             Subscribe(ref instance.subscriptions, message, callback);
         }
@@ -195,7 +195,7 @@ public sealed class Mediator
         protected void Unsubscribe(string message, Callback callback)
         {
             // First, remove the subscription from the internal records
-            Unsubscribe(ref totalSubscriptions, message, callback);
+            Unsubscribe(ref localSubscriptions, message, callback);
             // Then, remove the subcription from the public records
             Unsubscribe(ref instance.subscriptions, message, callback);
         }
@@ -207,7 +207,7 @@ public sealed class Mediator
         /// <param name="message">The message to unsubscribe from (case sensitive)</param>
         protected void UnsubcribeAllFrom(string message)
         {
-            Unsubscribe(message, totalSubscriptions[message]);
+            Unsubscribe(message, localSubscriptions[message]);
         }
         
 
@@ -216,18 +216,12 @@ public sealed class Mediator
         /// </summary>
         protected void UnsubscribeAll()
         {
-            foreach(string message in totalSubscriptions.Keys)
+            foreach(string message in localSubscriptions.Keys)
             {
-                Unsubscribe(ref instance.subscriptions, message, totalSubscriptions[message]);
+                Unsubscribe(ref instance.subscriptions, message, localSubscriptions[message]);
             }
 
-            totalSubscriptions.Clear();
-        }
-
-        ~Subscriber()
-        {
-            print("Dead");
-            UnsubscribeAll();
+            localSubscriptions.Clear();
         }
     }
 }
