@@ -223,6 +223,12 @@ public sealed class Mediator
 
             totalSubscriptions.Clear();
         }
+
+        ~Subscriber()
+        {
+            print("Dead");
+            UnsubscribeAll();
+        }
     }
 }
 
