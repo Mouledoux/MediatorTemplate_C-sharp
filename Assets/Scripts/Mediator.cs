@@ -220,7 +220,10 @@ public sealed class Mediator
 }
 
 /// !!! ATTENTION !!!
-///
+/// The below class is a "Data Packet" for sharing useful infomation between publishers and subscribers
+/// It currently only has 4 basic variables for communication
+/// Should you neeed a special data type added, do so at your own risk
+/// While adding or removing any arrays SHOULDN'T cause problems, make sure you make adjustment elsewhere too
 #region Packet Class
 
 /// <summary>
