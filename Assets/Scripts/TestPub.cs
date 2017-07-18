@@ -4,14 +4,8 @@ using UnityEngine;
 
 public class TestPub : MonoBehaviour
 {
-    public string msg;
-
-	private void Update ()
+    private void OnCollisionEnter(Collision collision)
     {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            print("broadcasting");
-            Mediator.instance.NotifySubscribers(msg, new Packet());
-        }
-	}
+        Mediator.instance.NotifySubscribers(collision.gameObject.GetInstanceID().ToString(), new Packet());
+    }
 }
