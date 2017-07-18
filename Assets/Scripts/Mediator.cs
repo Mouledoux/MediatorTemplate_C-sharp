@@ -14,7 +14,7 @@
  */
 
  /// <summary>
- /// Base class for all mediation.
+ /// Static class for all mediation.
  /// </summary>
 public sealed class Mediator
 {
@@ -40,7 +40,7 @@ public sealed class Mediator
     #endregion Singleton
 
     /// <summary>
-    /// Callback delegate to be used by all subscribers
+    /// Callback action to be used by all subscribers
     /// </summary>
     /// <param name="data">Predefined data Packet to act as potential arguments for subscriptions</param>
     public delegate void Callback(Packet data);
@@ -284,12 +284,12 @@ public class Packet
 /*
 internal sealed class Button
 {
-    // ID of the connected door
-    string linkedDoorID;
+    // ID of the connected object
+    string interactionID;
 
     void Interact()
     {
-        Mediator.instance.NotifySubscribers(linkedDoorID, new Packet());
+        Mediator.instance.NotifySubscribers(interactionID, new Packet());
     }
 
 
@@ -301,32 +301,32 @@ internal sealed class Button
     }
 }
 
-internal sealed class Door
+internal sealed class Light
 {
     // Unique ID for this door
-    string uniqueDoorID;
-    // Is the door open?
-    bool isOpen;
-    // What to do when the door is activated
+    string uniqueID;
+    // Is the light on?
+    bool isOn;
+    // What to do when the light is activated
     Mediator.Callback onInteract;
 
     Mediator.Subscriptions sub = new Mediator.Subscriptions();
 
     // Constructor
-    public Door()
+    public Light()
     {
         // Set the door to close by default
-        isOpen = false;
+        isOn = false;
         // Adds the OpenClose method to the interaction delegate
-        onInteract += OpenClose;
+        onInteract += Toggle;
         // Subscribes to its unique ID
-        sub.Subscribe(uniqueDoorID, onInteract);
+        sub.Subscribe(uniqueID, onInteract);
     }
 
-    void OpenClose(Packet p)
+    void Toggle(Packet p)
     {
         // Inverts the current door state
-        isOpen = !isOpen;
+        isOn = !isOn;
     }
 
     // For this unity example, a deconstructor will not work
