@@ -31,7 +31,7 @@ public sealed class Mediator
         {
             if (_instance == null)
             {
-                _instance = new Mediator(); // Non-Unity Version, must be removed for Unity projects
+                _instance = new Mediator();
             }
 
             return _instance;
