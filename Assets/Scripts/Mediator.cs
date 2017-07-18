@@ -228,6 +228,11 @@ public sealed class Mediator
 
             localSubscriptions.Clear();
         }
+
+        ~Subscriber()
+        {
+            UnsubscribeAll();
+        }
     }
 }
 
@@ -349,10 +354,10 @@ internal sealed class Door : Mediator.Subscriber
         isOpen = !isOpen;
     }
 
-    // Deconstructor
-    ~Door()
+    // For this unity example, a deconstructor will not work
+    // So we need to manually unsubscribe on destroy
+    private void OnDestroy()
     {
-        // When the door is removed via the garbage collector
         // We NEED to remove its subscriptions from the records
         UnsubscribeAll();
     }
