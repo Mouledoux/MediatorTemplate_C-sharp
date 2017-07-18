@@ -75,7 +75,7 @@ public sealed class Mediator
     /// <summary>
     /// Base class for all entities that will be listing for broadcasts
     /// </summary>
-    public sealed class Subscriber
+    public sealed class Subscriptions
     {
         /// <summary>
         /// Personal, internal record of all active subscriptions
@@ -205,7 +205,7 @@ public sealed class Mediator
             localSubscriptions.Clear();
         }
 
-        ~Subscriber()
+        ~Subscriptions()
         {
             UnsubscribeAll();
         }
@@ -282,7 +282,7 @@ public class Packet
 /// they cannot be used or inherited from
 /// 
 /// HOWEVER, they should still be removed or commented out
-
+/*
 internal sealed class Button
 {
     // ID of the connected door
@@ -302,7 +302,7 @@ internal sealed class Button
     }
 }
 
-internal sealed class Door : Mediator.Subscriber
+internal sealed class Door
 {
     // Unique ID for this door
     string uniqueDoorID;
@@ -310,6 +310,8 @@ internal sealed class Door : Mediator.Subscriber
     bool isOpen;
     // What to do when the door is activated
     Mediator.Callback onInteract;
+
+    Mediator.Subscriptions sub = new Mediator.Subscriptions();
 
     // Constructor
     public Door()
@@ -319,7 +321,7 @@ internal sealed class Door : Mediator.Subscriber
         // Adds the OpenClose method to the interaction delegate
         onInteract += OpenClose;
         // Subscribes to its unique ID
-        Subscribe(uniqueDoorID, onInteract);
+        sub.Subscribe(uniqueDoorID, onInteract);
     }
 
     void OpenClose(Packet p)
@@ -333,6 +335,7 @@ internal sealed class Door : Mediator.Subscriber
     private void OnDestroy()
     {
         // We NEED to remove its subscriptions from the records
-        UnsubscribeAll();
+        sub.UnsubscribeAll();
     }
 }
+//*/

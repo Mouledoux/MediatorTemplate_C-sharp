@@ -2,29 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestSub : Mediator.Subscriber
+public class TestSub : MonoBehaviour
 {
     public string msg;
     Mediator.Callback onNotify;
     Mediator.Callback onNotify2;
+
+    Mediator.Subscriptions subs = new Mediator.Subscriptions();
 
     private void Start()
     {
         print("Start");
 
         onNotify += HelloWorld;
-        Subscribe(msg, onNotify);
+        subs.Subscribe(msg, onNotify);
 
         onNotify2 += ByeWorld;
-        Subscribe(msg, onNotify2);
+        subs.Subscribe(msg, onNotify2);
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.U))
-            Unsubscribe(msg, onNotify);
+            subs.Unsubscribe(msg, onNotify);
         if (Input.GetKeyDown(KeyCode.I))
-            Unsubscribe(msg, onNotify2);
+            subs.Unsubscribe(msg, onNotify2);
 
         if (Input.GetKeyDown(KeyCode.Z))
             Destroy(gameObject);
@@ -32,7 +34,7 @@ public class TestSub : Mediator.Subscriber
 
     private void OnDestroy()
     {
-        UnsubscribeAll();
+        subs.UnsubscribeAll();
     }
 
     void HelloWorld(Packet p)

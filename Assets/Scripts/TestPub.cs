@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestPub : Mediator.Publisher
+public class TestPub : MonoBehaviour
 {
     public string msg;
 
@@ -11,7 +11,7 @@ public class TestPub : Mediator.Publisher
         if (Input.GetKeyDown(KeyCode.P))
         {
             print("broadcasting");
-            NotifySubscribers(msg, new Packet());
+            Mediator.instance.NotifySubscribers(msg, new Packet());
         }
 	}
 }
