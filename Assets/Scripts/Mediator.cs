@@ -57,7 +57,7 @@ public sealed class Mediator
     /// </summary>
     /// <param name="message">The message to be broadcasted (case sensitive)</param>
     /// <param name="data">Packet of information to be used by ALL recieving parties</param>
-    public static void NotifySubscribers(string message, Packet data)
+    public void NotifySubscribers(string message, Packet data)
     {
         // Temporary delegate container for modifying subscription delegates 
         Callback cb;
@@ -69,7 +69,6 @@ public sealed class Mediator
             cb.Invoke(data);
         }
     }
-
 
 
 
@@ -205,11 +204,6 @@ public sealed class Mediator
 
             localSubscriptions.Clear();
         }
-
-        ~Subscriber()
-        {
-            UnsubscribeAll();
-        }
     }
 }
 
@@ -277,8 +271,6 @@ public class Packet
 
 
 
-
-
 /// !!! EXAMPLE CLASSES !!! ///
 /// The classes below are for EXAMPLE ONLY
 /// They are internal and sealed so that in the event they are not removed,
@@ -286,14 +278,14 @@ public class Packet
 /// 
 /// HOWEVER, they should still be removed or commented out
 
-internal sealed class Button : Mediator.Publisher
+internal sealed class Button
 {
     // ID of the connected door
     string linkedDoorID;
 
     void Interact()
     {
-        BroadcastMessage(linkedDoorID);
+        Mediator.instance.NotifySubscribers(linkedDoorID, new Packet());
     }
 
 
