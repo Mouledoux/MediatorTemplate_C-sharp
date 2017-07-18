@@ -77,12 +77,11 @@ public sealed class Mediator
     /// </summary>
     public sealed class Subscriptions
     {
-        /// <summary>
+       /// <summary>
         /// Personal, internal record of all active subscriptions
         /// </summary>
        private System.Collections.Generic.Dictionary<string, Callback> localSubscriptions =
             new System.Collections.Generic.Dictionary<string, Callback>();
-
 
         /// <summary>
         /// Links a custom delegate to a message in a SPECIFIC subscription dictionary
