@@ -51,55 +51,32 @@ public sealed class Mediator
     private System.Collections.Generic.Dictionary<string, Callback> subscriptions =
         new System.Collections.Generic.Dictionary<string, Callback>();
 
-    
-
-    /// !!! READ ME !!! ///
-    /// Below are the base classes for the Publishers, and Subscribers
-    /// Any entity that will be broadcasting messages MUST inherit from Mediator.Publisher
-    /// Any entity that will be listining for messages MUST inherit from Mediator.Subscriber
-    /// 
-    /// Because Publisher and Subscriber are classes that must be inherited,
-    /// no single entity can be both a Publisher, AND a Subscriber
-    /// 
-    /// Example: A button that opens a menu, and changes color
-    /// The button would be a Publisher, and the menu a Subscriber.
-    /// The color change should be handeled by the button internally, OR
-    /// the button would have a 'color' element that is a Subscriber
-    /// the button is NOT both a Publisher AND Subscriber
-
-
-
     /// <summary>
-    /// Base class for all entities that will be broadcasting
+    /// Checks to see if their are any Subscribers to the broadcasted message
+    /// and invokes ALL callbacks associated with it
     /// </summary>
-    public class Publisher : UnityEngine.MonoBehaviour // <--- No inheritance is necessary for non-Unity projects and should be removed
+    /// <param name="message">The message to be broadcasted (case sensitive)</param>
+    /// <param name="data">Packet of information to be used by ALL recieving parties</param>
+    public static void NotifySubscribers(string message, Packet data)
     {
-        /// <summary>
-        /// Checks to see if their are any Subscribers to the broadcasted message
-        /// and invokes ALL callbacks associated with it
-        /// </summary>
-        /// <param name="message">The message to be broadcasted (case sensitive)</param>
-        /// <param name="data">Packet of information to be used by ALL recieving parties</param>
-        protected void NotifySubscribers(string message, Packet data)
-        {
-            // Temporary delegate container for modifying subscription delegates 
-            Callback cb;
+        // Temporary delegate container for modifying subscription delegates 
+        Callback cb;
 
-            // Check to see if the message has any valid subscriptions
-            if (instance.subscriptions.TryGetValue(message, out cb))
-            {
-                // Invokes ALL associated delegates with the data Packet as the argument
-                cb.Invoke(data);
-            }
+        // Check to see if the message has any valid subscriptions
+        if (instance.subscriptions.TryGetValue(message, out cb))
+        {
+            // Invokes ALL associated delegates with the data Packet as the argument
+            cb.Invoke(data);
         }
     }
+
 
 
 
     /// <summary>
     /// Base class for all entities that will be listing for broadcasts
     /// </summary>
-    public class Subscriber : UnityEngine.MonoBehaviour // <--- No inheritance is necessary for non-Unity projects and should be removed
+    public abstract class Subscriber : UnityEngine.MonoBehaviour // <--- No inheritance is necessary for non-Unity projects and should be removed
     {
         /// <summary>
         /// Personal, internal record of all active subscriptions

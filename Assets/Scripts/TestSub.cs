@@ -27,12 +27,17 @@ public class TestSub : Mediator.Subscriber
             Unsubscribe(msg, onNotify2);
 
         if (Input.GetKeyDown(KeyCode.Z))
-            UnsubscribeAll();
+            Destroy(gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        UnsubscribeAll();
     }
 
     void HelloWorld(Packet p)
     {
-        transform.Translate(Vector3.up * name.Length);
+        transform.Translate(Vector3.up);
     }
     void ByeWorld(Packet p)
     {
