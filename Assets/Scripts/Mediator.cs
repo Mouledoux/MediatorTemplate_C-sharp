@@ -75,7 +75,7 @@ public sealed class Mediator
     /// <summary>
     /// Base class for all entities that will be listing for broadcasts
     /// </summary>
-    public abstract class Subscriber : UnityEngine.MonoBehaviour // <--- No inheritance is necessary for non-Unity projects and should be removed
+    public sealed class Subscriber
     {
         /// <summary>
         /// Personal, internal record of all active subscriptions
@@ -118,7 +118,7 @@ public sealed class Mediator
         /// </summary>
         /// <param name="message">The message to subscribe to (case sensitive)</param>
         /// <param name="callback">The delegate to be linked to the broadcast message</param>
-        protected void Subscribe(string message, Callback callback)
+        public void Subscribe(string message, Callback callback)
         {
             // First, adds the subscription to the internaal records
             Subscribe(ref localSubscriptions, message, callback);
@@ -133,7 +133,7 @@ public sealed class Mediator
         /// <param name="container">Refrence to the dictionary of subscriptions we want to modify</param>
         /// <param name="message">The message to unsubscribe from (case sensitive)</param>
         /// <param name="callback">The delegate to be removed from the broadcast message</param>
-        private void Unsubscribe(ref System.Collections.Generic.Dictionary<string, Callback> container, string message, Callback callback)
+        public void Unsubscribe(ref System.Collections.Generic.Dictionary<string, Callback> container, string message, Callback callback)
         {
             // Temporary delegate container for modifying subscription delegates 
             Callback cb;
@@ -168,7 +168,7 @@ public sealed class Mediator
         /// </summary>
         /// <param name="message">The message to unsubscribe from (case sensitive)</param>
         /// <param name="callback">The delegate to be unlinked from the broadcast message</param>
-        protected void Unsubscribe(string message, Callback callback)
+        public void Unsubscribe(string message, Callback callback)
         {
             // First, remove the subscription from the internal records
             Unsubscribe(ref localSubscriptions, message, callback);
@@ -181,7 +181,7 @@ public sealed class Mediator
         /// Unlinks all (local) delegates from given broadcast message
         /// </summary>
         /// <param name="message">The message to unsubscribe from (case sensitive)</param>
-        protected void UnsubcribeAllFrom(string message)
+        public void UnsubcribeAllFrom(string message)
         {
             Unsubscribe(message, localSubscriptions[message]);
         }
@@ -195,7 +195,7 @@ public sealed class Mediator
         /// <summary>
         /// Unlinks all (local) delegates from every (local) broadcast message
         /// </summary>
-        protected void UnsubscribeAll()
+        public void UnsubscribeAll()
         {
             foreach(string message in localSubscriptions.Keys)
             {
@@ -203,6 +203,11 @@ public sealed class Mediator
             }
 
             localSubscriptions.Clear();
+        }
+
+        ~Subscriber()
+        {
+            UnsubscribeAll();
         }
     }
 }
